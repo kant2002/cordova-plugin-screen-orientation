@@ -57,7 +57,7 @@ var ScreenOrientation = function () {
  *            {Function} is called with a orientation change was done with error.
  */
 ScreenOrientation.prototype.setOrientation = function (orientation, successCallback, errorCallback) {
-    argscheck.checkArgs('FF', 'ScreenOrientation.setOrientation', arguments);
+    argscheck.checkArgs('SFF', 'ScreenOrientation.setOrientation', arguments);
     var success = successCallback && function (lastModified) {
         console.log("Sucess call to setOrientation");
         //var metadata = new Metadata(lastModified);
