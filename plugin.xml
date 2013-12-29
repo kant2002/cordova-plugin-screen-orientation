@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="org.apache.cordova.screenorientation"
+    version="0.0.1">
+
+    <name>ScreenOrientation</name>
+    <description>Screen Orientation Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,screen,orientation</keywords>
+    <repo>https://github.com/kant2002/cordova-plugin-screen-orientation.git</repo>
+    <issue></issue>
+
+    <js-module src="www/screenorientation.js" name="ScreenOrientation">
+        <clobbers target="window.ScreenOrientation" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="ScreenOrientation">
+                <param name="android-package" value="org.apache.cordova.screenorientation.ScreenOrientation"/>
+            </feature>
+        </config-file>
+
+        <source-file src="src/android/ScreenOrientation.java" target-dir="src/org/apache/cordova/screenorientation" />
+
+<!--
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.VIBRATE"/>
+        </config-file>
+-->
+    </platform>
+
+    <!-- ios -->
+<!--
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="ScreenOrientation">
+                <param name="ios-package" value="CDVScreenOrientation"/>
+            </feature>
+        </config-file>
+        <header-file src="src/ios/CDVScreenOrientation.h" />
+	    <source-file src="src/ios/CDVScreenOrientation.m" />
+    </platform>
+-->
+</plugin>
+
