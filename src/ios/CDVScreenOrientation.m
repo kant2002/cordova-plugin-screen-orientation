@@ -18,6 +18,8 @@
  */
 
 #import "CDVScreenOrientation.h"
+#import <Cordova/CDV.h>
+#import <objc/message.h>
 
 #define kSplashScreenDurationDefault 0.25f
 
@@ -29,17 +31,41 @@
 
 - (void)setOrientation:(CDVInvokedUrlCommand*)command
 {
-    [self updateOrientation];
+    NSString* orientationName = [command.arguments objectAtIndex:0];
+    UIInterfaceOrientation orientation = [self getOrientation:orientationName];
+    NSLog(@"Setting orientation %@", orientationName);
+    [self updateOrientation:orientation];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
 - (void)lock:(CDVInvokedUrlCommand*)command
 {
-    [self updateOrientation];
+    UIInterfaceOrientation orientation = UIInterfaceOrientationLandscapeLeft;
+    [self updateOrientation:orientation];
+    
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
-- (void)updateOrientation
+- (UIInterfaceOrientation)getOrientation:(NSString*)orientationName
 {
-    [self.viewController attemptRottionToDeviceOrientation];
+    if ([orientationName isEqualToString:@"portrait"]) {
+        return UIInterfaceOrientationPortrait;
+    } else if ([orientationName isEqualToString:@"landscape"]) {
+        return UIInterfaceOrientationLandscapeLeft;
+    } else if ([orientationName isEqualToString:@"reverseLandscape"]) {
+        return UIInterfaceOrientationLandscapeRight;
+    } else if ([orientationName isEqualToString:@"reversePortrait"]) {
+        return UIInterfaceOrientationPortraitUpsideDown;
+    }
+    
+    return UIInterfaceOrientationPortrait;
+}
+
+- (void)updateOrientation:(UIInterfaceOrientation)orientation
+{
+    objc_msgSend([UIDevice currentDevice], @selector(setOrientation:), orientation);
 }
 
 @end

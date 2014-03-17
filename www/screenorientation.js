@@ -43,6 +43,7 @@ var ScreenOrientation = function () {
     this.orientation.reverseLandscape = "reverseLandscape";
     this.orientation.reversePortrait = "reversePortrait";
     this.orientation.fullSensor = "fullSensor";
+    this.lockOrientation = true;
 };
 
 /**
@@ -54,17 +55,24 @@ var ScreenOrientation = function () {
  *            {Function} is called with a orientation change was done with error.
  */
 ScreenOrientation.prototype.setOrientation = function (orientation, successCallback, errorCallback) {
+    var self = this;
     argscheck.checkArgs('SFF', 'ScreenOrientation.setOrientation', arguments);
-    var success = successCallback && function (lastModified) {
+    var oldLockOrientation = this.lockOrientation;
+    var success = function (lastModified) {
         console.log("Sucess call to setOrientation");
-        //var metadata = new Metadata(lastModified);
+        setTimeout(function(){
+            console.log("Success call to setOrientation(" + orientation + ") - set orientationlock back to " + oldLockOrientation);
+            self.lockOrientation = oldLockOrientation;
+        }, 100);
         //successCallback(metadata);
     };
     var fail = errorCallback && function(code) {
+        self.lockOrientation = oldLockOrientation;
         console.log("Error during call to setOrientation");
         //errorCallback(new FileError(code));
     };
 
+    self.lockOrientation = false;
     exec(success, fail, "ScreenOrientation", "setOrientation", [orientation]);
 };
 
@@ -72,7 +80,21 @@ ScreenOrientation.prototype.setOrientation = function (orientation, successCallb
  * Lock current screen orientation.
  */
 ScreenOrientation.prototype.lock = function () {
+    this.lockOrientation = true;
     exec(success, fail, "ScreenOrientation", "lock", []);
 };
+
+/**
+ * Unlock current screen orientation.
+ */
+ScreenOrientation.prototype.lock = function () {
+    this.lockOrientation = false;
+    exec(success, fail, "ScreenOrientation", "unlock", []);
+};
+
+ScreenOrientation.prototype.shouldRotateToOrientation = function(interfaceOrientation) {
+    console.log("shouldRotateToOrientation(" + interfaceOrientation + ") = " + this.lockOrientation);
+    return !this.lockOrientation;
+}
 
 module.exports = new ScreenOrientation();

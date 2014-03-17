@@ -26,5 +26,6 @@
 
 - (void)setOrientation:(CDVInvokedUrlCommand*)command;
 - (void)lock:(CDVInvokedUrlCommand*)command;
+- (void)unlock:(CDVInvokedUrlCommand*)command;
 
 @end
