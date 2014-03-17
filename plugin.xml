@@ -34,7 +34,6 @@
     </platform>
 
     <!-- ios -->
-<!--
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
             <feature name="ScreenOrientation">
@@ -44,6 +43,6 @@
         <header-file src="src/ios/CDVScreenOrientation.h" />
 	    <source-file src="src/ios/CDVScreenOrientation.m" />
     </platform>
--->
+
 </plugin>
 

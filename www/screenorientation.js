@@ -68,4 +68,11 @@ ScreenOrientation.prototype.setOrientation = function (orientation, successCallb
     exec(success, fail, "ScreenOrientation", "setOrientation", [orientation]);
 };
 
+/**
+ * Lock current screen orientation.
+ */
+ScreenOrientation.prototype.lock = function () {
+    exec(success, fail, "ScreenOrientation", "lock", []);
+};
+
 module.exports = new ScreenOrientation();
