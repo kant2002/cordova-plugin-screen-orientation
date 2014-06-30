@@ -65,7 +65,7 @@
 
 - (void)updateOrientation:(UIInterfaceOrientation)orientation
 {
-    objc_msgSend([UIDevice currentDevice], @selector(setOrientation:), orientation);
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
 }
 
 @end
