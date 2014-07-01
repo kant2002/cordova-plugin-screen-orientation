@@ -79,16 +79,28 @@ ScreenOrientation.prototype.setOrientation = function (orientation, successCallb
 /**
  * Lock current screen orientation.
  */
-ScreenOrientation.prototype.lock = function () {
+ScreenOrientation.prototype.lock = function (successCallback, errorCallback) {
     this.lockOrientation = true;
+    var success = successCallback && function (code) {
+        //successCallback(metadata);
+    };
+    var fail = errorCallback && function(code) {
+        //errorCallback(code);
+    };
     exec(success, fail, "ScreenOrientation", "lock", []);
 };
 
 /**
  * Unlock current screen orientation.
  */
-ScreenOrientation.prototype.lock = function () {
+ScreenOrientation.prototype.unlock = function (successCallback, errorCallback) {
     this.lockOrientation = false;
+    var success = successCallback && function (code) {
+        //successCallback(metadata);
+    };
+    var fail = errorCallback && function(code) {
+        //errorCallback(code);
+    };
     exec(success, fail, "ScreenOrientation", "unlock", []);
 };
 
