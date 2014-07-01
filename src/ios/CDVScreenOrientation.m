@@ -65,7 +65,10 @@
 
 - (void)updateOrientation:(UIInterfaceOrientation)orientation
 {
-    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
+        [UIViewController attemptRotationToDeviceOrientation];
+    });
 }
 
 @end
