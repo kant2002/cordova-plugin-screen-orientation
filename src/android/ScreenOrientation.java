@@ -75,7 +75,7 @@ public class ScreenOrientation extends CordovaPlugin  {
                             public void run() {
                                 view.setVisibility(View.VISIBLE);
                             }
-					    }, 1300);
+            	        }, 1300);
                     }
                 });
                 lastOrientation = androidOrientation;
