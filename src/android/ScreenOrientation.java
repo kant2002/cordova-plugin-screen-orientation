@@ -17,14 +17,14 @@ package org.apache.cordova.screenorientation;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
-
+import org.apache.cordova.LOG;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.os.Handler;
+import android.view.View;
 
 public class ScreenOrientation extends CordovaPlugin  {
     private static final String UNSPECIFIED = "unspecified";
@@ -40,6 +40,8 @@ public class ScreenOrientation extends CordovaPlugin  {
     private static final String REVERSE_PORTRAIT = "reversePortrait";
     private static final String FULL_SENSOR = "fullSensor";
 
+    private int lastOrientation = -1;
+
     /**
      * Executes the request and returns whether the action was valid.
      *
@@ -49,34 +51,34 @@ public class ScreenOrientation extends CordovaPlugin  {
      * @return                         True if the action was valid, false otherwise.
      */
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        final String orientation = args.optString(0);
+        final Activity activity = this.cordova.getActivity();
+        final View view = this.webView;
+
         if (action.equals("setOrientation")) {
-            String orientation = args.optString(0);
+            LOG.w("ScreenOrientation", "Change orientation");
+            final int androidOrientation = getOrientation(orientation);
+            if (lastOrientation == -1) {
+                lastOrientation = androidOrientation;
+            }
             
-            Activity activity = this.cordova.getActivity();
-            if (orientation.equals(UNSPECIFIED)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            } else if (orientation.equals(LANDSCAPE)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else if (orientation.equals(PORTRAIT)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            } else if (orientation.equals(USER)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-            } else if (orientation.equals(BEHIND)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_BEHIND);
-            } else if (orientation.equals(SENSOR)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-            } else if (orientation.equals(NOSENSOR)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-            } else if (orientation.equals(SENSOR_LANDSCAPE)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            } else if (orientation.equals(SENSOR_PORTRAIT)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-            } else if (orientation.equals(REVERSE_LANDSCAPE)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-            } else if (orientation.equals(REVERSE_PORTRAIT)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
-            } else if (orientation.equals(FULL_SENSOR)) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+            if (lastOrientation != androidOrientation) {
+                activity.runOnUiThread(new Runnable() {
+                    public void run() {
+                        LOG.v("ScreenOrientation", "Set orientation");
+                        view.setVisibility(View.INVISIBLE);
+                        activity.setRequestedOrientation(androidOrientation);
+
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.setVisibility(View.VISIBLE);
+                            }
+					    }, 1300);
+                    }
+                });
+                lastOrientation = androidOrientation;
             }
             
             callbackContext.success();
@@ -84,5 +86,35 @@ public class ScreenOrientation extends CordovaPlugin  {
         } else {
             return false;
         }
+    }
+    
+    public int getOrientation(String orientation) {
+        if (orientation.equals(UNSPECIFIED)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        } else if (orientation.equals(LANDSCAPE)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else if (orientation.equals(PORTRAIT)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else if (orientation.equals(USER)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_USER);
+        } else if (orientation.equals(BEHIND)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_BEHIND);
+        } else if (orientation.equals(SENSOR)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        } else if (orientation.equals(NOSENSOR)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+        } else if (orientation.equals(SENSOR_LANDSCAPE)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        } else if (orientation.equals(SENSOR_PORTRAIT)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        } else if (orientation.equals(REVERSE_LANDSCAPE)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        } else if (orientation.equals(REVERSE_PORTRAIT)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+        } else if (orientation.equals(FULL_SENSOR)) {
+            return (ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        }
+
+        return (ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 }
