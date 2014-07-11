@@ -44,6 +44,7 @@ var ScreenOrientation = function () {
     this.orientation.reversePortrait = "reversePortrait";
     this.orientation.fullSensor = "fullSensor";
     this.lockOrientation = true;
+    this.logging = false;
 };
 
 /**
@@ -59,16 +60,22 @@ ScreenOrientation.prototype.setOrientation = function (orientation, successCallb
     argscheck.checkArgs('SFF', 'ScreenOrientation.setOrientation', arguments);
     var oldLockOrientation = this.lockOrientation;
     var success = function (lastModified) {
-        console.log("Sucess call to setOrientation");
+        if (self.logging) {
+            console.log("Sucess call to setOrientation");
+        }
+
         setTimeout(function(){
-            console.log("Success call to setOrientation(" + orientation + ") - set orientationlock back to " + oldLockOrientation);
+            if (self.logging) {
+                console.log("Success call to setOrientation(" + orientation + ") - set orientationlock back to " + oldLockOrientation);
+            }
+
             self.lockOrientation = oldLockOrientation;
         }, 100);
         //successCallback(metadata);
     };
     var fail = errorCallback && function(code) {
         self.lockOrientation = oldLockOrientation;
-        console.log("Error during call to setOrientation");
+        console.error("Error during call to setOrientation");
         //errorCallback(new FileError(code));
     };
 
@@ -105,7 +112,10 @@ ScreenOrientation.prototype.unlock = function (successCallback, errorCallback) {
 };
 
 ScreenOrientation.prototype.shouldRotateToOrientation = function(interfaceOrientation) {
-    console.log("shouldRotateToOrientation(" + interfaceOrientation + ") = " + this.lockOrientation);
+    if (this.logging) {
+        console.log("shouldRotateToOrientation(" + interfaceOrientation + ") = " + this.lockOrientation);
+    }
+
     return !this.lockOrientation;
 }
 
