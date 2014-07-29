@@ -44,6 +44,7 @@ var ScreenOrientation = function () {
     this.orientation.reversePortrait = "reversePortrait";
     this.orientation.fullSensor = "fullSensor";
     this.lockOrientation = true;
+    this.currentOrientation = "portrait";
     this.logging = false;
 };
 
@@ -58,6 +59,7 @@ var ScreenOrientation = function () {
 ScreenOrientation.prototype.setOrientation = function (orientation, successCallback, errorCallback) {
     var self = this;
     argscheck.checkArgs('SFF', 'ScreenOrientation.setOrientation', arguments);
+    this.currentOrientation = orientation;
     var oldLockOrientation = this.lockOrientation;
     var success = function (lastModified) {
         if (self.logging) {
@@ -112,11 +114,20 @@ ScreenOrientation.prototype.unlock = function (successCallback, errorCallback) {
 };
 
 ScreenOrientation.prototype.shouldRotateToOrientation = function(interfaceOrientation) {
+    var result = !this.lockOrientation;
+    if (this.currentOrientation == "portrait") {
+        result = (interfaceOrientation == 0) || (interfaceOrientation == 180);
+    }
+    
+    if (this.currentOrientation == "landscape") {
+        result = (interfaceOrientation == 90) || (interfaceOrientation == -90);
+    }
+    
     if (this.logging) {
-        console.log("shouldRotateToOrientation(" + interfaceOrientation + ") = " + this.lockOrientation);
+        console.log("shouldRotateToOrientation(" + interfaceOrientation + ") = " + result);
     }
 
-    return !this.lockOrientation;
+    return result;
 }
 
 module.exports = new ScreenOrientation();
